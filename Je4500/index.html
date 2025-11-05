@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="ja">
-  <link rel="icon" href="https://lh7-rt.googleusercontent.com/slidesz/AGV_vUctC95Tu99-RUGtSsRa7JCpKd1-JgUVm6J21aai3oFSZJuxSvV43A2n3IugfQwGGVyl8ACZxEdGCCj0lBs0HGvMbCgqYXDQV-28H9ovg29sICNOzaX5XCDpZTvtFH-jdakZ8U6LgFQDTStB-7e95u6U7j9hAg=nw?key=HN2h_traoN9V8eXyLO-uUA">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stock4500</title>
+  <link rel="icon" href="https://lh7-rt.googleusercontent.com/slidesz/AGV_vUctC95Tu99-RUGtSsRa7JCpKd1-JgUVm6J21aai3oFSZJuxSvV43A2n3IugfQwGGVyl8ACZxEdGCCj0lBs0HGvMbCgqYXDQV-28H9ovg29sICNOzaX5XCDpZTvtFH-jdakZ8U6LgFQDTStB-7e95u6U7j9hAg=nw?key=HN2h_traoN9V8eXyLO-uUA">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -25,6 +23,7 @@
       max-width: 600px;
       width: 100%;
       text-align: center;
+      position: relative;
     }
     h3 {
       color: #8a2be2;
@@ -91,19 +90,18 @@
     }
     .options label {
       display: block;
-      padding: 14px 20px; /* 左右パディング均等 */
+      padding: 14px 20px;
       background: #ecf0f1;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
       border: 2px solid transparent;
-      text-align: center; /* 中央揃え */
+      text-align: center;
       font-weight: 500;
     }
     .options label:hover:not(.disabled) {
       background: #bdc3c7;
     }
-    /* 丸を非表示 */
     .options input[type="radio"] {
       position: absolute;
       opacity: 0;
@@ -153,7 +151,6 @@
     .label {
       color: #2c3e50;
     }
-    /* 追加：長方形枠のリンク */
     .social-link {
       margin-top: 30px;
       padding-top: 20px;
@@ -177,7 +174,6 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(29, 161, 242, 0.2);
     }
-        /* キャンセルボタン */
     .cancel-btn {
       position: absolute;
       top: 20px;
@@ -187,6 +183,9 @@
       padding: 8px 16px;
       font-size: 0.9em;
       border-radius: 6px;
+    }
+    .cancel-btn:hover {
+      background: #4a0072;
     }
   </style>
 </head>
@@ -202,26 +201,25 @@
         <span class="label">範囲:</span>
         <input type="number" id="startNum" min="1" max="2155" value="1" />
         <span class="label">〜</span>
-        <input type="number" id="endNum" min="1" max="2155" value="10" />
+        <input type="number" id="endNum" min="1" max="2155" value="100" />
       </div>
       <div class="input-group">
         <span class="label">出題数:</span>
-        <input type="number" id="questionCount" min="1" max="10" value="5" />
+        <input type="number" id="questionCount" min="1" max="2155" value="20" />
         <span class="label">問</span>
       </div>
       <button id="startBtn">クイズ開始</button>
-         <!-- 追加：長方形枠リンク -->
       <div class="social-link">
-        <a href="https://stock4500-quiz.netlify.app/"  rel="noopener">
+        <a href="https://stock4500-quiz.netlify.app/" rel="noopener">
           ホームに戻る
-        </a></div>
+        </a>
+      </div>
     </div>
 
     <!-- クイズ画面 -->
     <div id="quizScreen" class="quiz-screen">
-            <!-- キャンセルボタン -->
       <button class="cancel-btn" id="cancelBtn">キャンセル</button>
-      <div class="progress" id="progress">問題 1/5</div>
+      <div class="progress" id="progress">問題 1/20</div>
       <div class="question" id="question">読み込み中...</div>
       <ul class="options" id="options"></ul>
       <div class="result" id="result"></div>
@@ -230,7 +228,7 @@
     <!-- 結果画面 -->
     <div id="resultScreen" class="result-screen">
       <h2>クイズ終了！</h2>
-      <div class="final-score" id="finalScore">得点: 0 / 5</div>
+      <div class="final-score" id="finalScore">得点: 0 / 20</div>
       <div id="accuracy">正答率: 0%</div>
       <button class="restart" onclick="location.reload()">もう一度挑戦</button>
     </div>
@@ -238,7 +236,6 @@
   </div>
 
   <script>
-    // 全11問（インデックス0〜10）
     const quizData = [
 { question: "arise", options: ["起こる", "余剰", "際立った", "終わらせる"], correct: 0 },
 { question: "sit", options: ["座る", "限定する", "定期的に", "とてつもない"], correct: 0 },
@@ -2404,7 +2401,7 @@
     let currentCorrectIndex = -1;
     let isAnswered = false;
     let autoNextTimer = null;
-    let totalQuestions = 5; // 実際の出題数
+    let totalQuestions = 20;
 
     const startScreen = document.getElementById('startScreen');
     const quizScreen = document.getElementById('quizScreen');
@@ -2413,6 +2410,7 @@
     const endNumInput = document.getElementById('endNum');
     const questionCountInput = document.getElementById('questionCount');
     const startBtn = document.getElementById('startBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
     const questionEl = document.getElementById('question');
     const optionsEl = document.getElementById('options');
     const resultEl = document.getElementById('result');
@@ -2420,26 +2418,52 @@
     const finalScoreEl = document.getElementById('finalScore');
     const accuracyEl = document.getElementById('accuracy');
 
+    // 設定を保存
+    function saveSettings() {
+      const settings = {
+        start: startNumInput.value,
+        end: endNumInput.value,
+        count: questionCountInput.value
+      };
+      localStorage.setItem('stock4500_settings', JSON.stringify(settings));
+    }
+
+    // 設定を復元
+    function loadSettings() {
+      const saved = localStorage.getItem('stock4500_settings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        startNumInput.value = settings.start || 1;
+        endNumInput.value = settings.end || 100;
+        questionCountInput.value = settings.count || 20;
+      }
+    }
+
+    // 入力が変わるたびに保存
+    startNumInput.addEventListener('input', saveSettings);
+    endNumInput.addEventListener('input', saveSettings);
+    questionCountInput.addEventListener('input', saveSettings);
+
+    // ページ読み込み時に復元
+    window.addEventListener('load', loadSettings);
+
     // 開始ボタン
     startBtn.onclick = () => {
+      saveSettings(); // 開始時にも保存
+
       let start = parseInt(startNumInput.value);
       let end = parseInt(endNumInput.value);
       let count = parseInt(questionCountInput.value);
 
-      // 入力補正
       if (isNaN(start) || start < 1) start = 1;
       if (isNaN(end) || end > quizData.length) end = quizData.length;
       if (start > end) [start, end] = [end, start];
       if (isNaN(count) || count < 1) count = 1;
 
-      // 範囲内の問題
       const rangeQuestions = quizData.slice(start - 1, end);
       const rangeSize = rangeQuestions.length;
-
-      // 出題数を範囲内に収める
       totalQuestions = Math.min(count, rangeSize);
 
-      // ランダムに選出
       selectedQuestions = [...rangeQuestions]
         .sort(() => Math.random() - 0.5)
         .slice(0, totalQuestions);
@@ -2451,20 +2475,18 @@
       score = 0;
       loadQuestion();
     };
- // キャンセルボタン
+
+    // キャンセルボタン
     cancelBtn.onclick = () => {
       if (confirm("クイズをキャンセルしますか？\n（進捗は保存されません）")) {
         cancelQuiz();
       }
     };
 
-    // キャンセル処理
     function cancelQuiz() {
       if (autoNextTimer) clearTimeout(autoNextTimer);
       quizScreen.classList.remove('active');
       startScreen.classList.add('active');
-
-      // 状態リセット
       currentQuestion = 0;
       score = 0;
       selectedQuestions = [];
@@ -2472,7 +2494,6 @@
       isAnswered = false;
     }
 
-    // 問題読み込み
     function loadQuestion() {
       if (currentQuestion >= totalQuestions) {
         showResult();
@@ -2482,12 +2503,10 @@
       if (autoNextTimer) clearTimeout(autoNextTimer);
 
       const q = selectedQuestions[currentQuestion];
-
       currentQuestion++;
       questionEl.textContent = q.question;
       progressEl.textContent = `問題 ${currentQuestion}/${totalQuestions}`;
 
-      // 選択肢シャッフル
       const indices = [0, 1, 2, 3];
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -2524,7 +2543,6 @@
       });
     }
 
-    // 回答判定
     function judgeAnswer() {
       document.querySelectorAll('input[name="answer"]').forEach(radio => {
         radio.disabled = true;
@@ -2554,7 +2572,6 @@
       }, 2000);
     }
 
-    // 結果表示
     function showResult() {
       if (autoNextTimer) clearTimeout(autoNextTimer);
       quizScreen.classList.remove('active');
@@ -2564,5 +2581,6 @@
       accuracyEl.textContent = `正答率: ${accuracy}%`;
     }
   </script>
+
 </body>
 </html>
